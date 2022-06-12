@@ -544,4 +544,4 @@ readPath();
 ```
 Bom senso define esse código. Encadeamento de callbacks? No máximo dois e olha lá. Não faça aquele código que você só você e Deus são capazes de entender, pois chega o dia em somente Deus vai saber o que o código faz. 
 
-Com isso finalizamos o entendimento inicial sobre o Node.js, tudo o que você precisa saber para não ser um completo ignorante. Vamos agora 
+Com isso finalizamos o entendimento inicial sobre o Node.js, tudo o que você precisa saber para não ser um completo ignorante.
