@@ -1,0 +1,26 @@
+{
+	"name": "meu-primeiro-app",
+	"version": "1.0.0",
+	"description": "Meu primeiro App",
+	"main": "index.js",
+	"scripts": {
+		"test": "jest"
+	},
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/evaldomaciel/hands-on-nodejs.git"
+	},
+	"keywords": [
+		"Nodejs",
+		"node",
+		"javascript",
+		"typescript"
+	],
+	"author": "Evaldo Borba Maciel",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/evaldomaciel/hands-on-nodejs/issues"
+	},
+	"homepage": "https://github.com/evaldomaciel/hands-on-nodejs#readme"
+}
