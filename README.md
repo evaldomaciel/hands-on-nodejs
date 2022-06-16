@@ -41,7 +41,7 @@ O retorno esperado é "***Hello World***", óbvio não é mesmo? Parabéns, voc�
 ## Gerenciando módulos
 
 ### NPM
-O NPM (Node Package Manager) é gerenciado de pacotes do Node, ele não nasceu com o Node, mas ganhou força devido ao uso pela comunidade e a partir da versão **0.6.0** passou a fazer parte oficialmente do projeto sendo o gerenciado padrão. 
+O NPM (Node Package Manager) é gerenciador de pacotes padrão do Node, embora não nascido com o motor, o NPM ganhou força devido ao uso pela comunidade e a partir da versão **0.6.0** passou a fazer parte oficialmente do projeto sendo o gerenciado padrão. 
 
 Vamos listar alguns comandos do NPM, mas apenas não se preocupe com eles nesse momento, vamos utilizar na prática. 
 
@@ -61,7 +61,7 @@ Vamos listar alguns comandos do NPM, mas apenas não se preocupe com eles nesse 
 - **npm publish**: publica um módulo no site do NPM (é necessário ter uma conta antes).
 
 ### Yarn
-Nos últimos anos o Yarn, outro gerenciado de pacotes desenvolvido pelo Facebook, começou a ganhar muito espaço pois o seu propósito é solucionar todos os problemas encontrados no NPM, tanto com relação a desempenho quanto segurança.
+Nos últimos anos o Yarn, outro gerenciador de pacotes desenvolvido pelo Facebook, começou a ganhar muito espaço pelo fato de seu propósito ser solucionar todos os problemas encontrados no NPM, tanto em relação a desempenho quanto segurança.
 
 - **yarn init**: inicializar o gerenciador;
 - **yarn global add create-react-app**: cria um projeto global;
@@ -74,11 +74,11 @@ Particularmente, prefiro utilizar o Yarn, mas é essencial que você conheça os
 
 ### PACKAGE.JSON
 
-Todo projeto Node.js é essencialmente um módulo, que também pode ser chamado de biblioteca, pacote ou *framework*, depende do conjunto de funcionalidades desenvolvido, o objetivo e a utilidade, nesse instante, para nós será simplesmente um módulo. Todo módulo Node.js possuí um arquivo *package.json*, o documento descrito do projeto. Para facilitar as coisas, a partir do desse momento vão nos referir ao projeto como um **pacote**.
+Todo projeto Node.js é essencialmente um módulo, que também pode ser chamado de biblioteca, pacote ou *framework*. Depende do conjunto de funcionalidades desenvolvido, o objetivo e a utilidade. Nesse instante, para nós, será simplesmente um módulo. Todo módulo Node.js possuí um arquivo *package.json*, o documento descritor do projeto. Para facilitar as coisas, a partir do desse momento vão nos referir ao projeto como um **pacote**.
 
 O *package.json* é essencial para o projeto e se mal configurado pode causar bugs no projeto, pois este possuí atributos e valores chaves do projeto e também carregam as informações dos demais módulos que instalamos no decorrer do desenvolvimento do projeto.
 
-É possível criar o arquivo *package.json* manual, mas ao iniciar o NPM com o comando "***npm init***", se não houver um arquivo criado no seu projeto, o NPM fará algumas perguntas relacionadas ao projeto e ao final do questionário um arquivo *package.json* será criado para você. 
+É possível criar o arquivo *package.json* manualmente, mas ao iniciar o NPM com o comando "***npm init***", se não houver um arquivo criado no seu projeto, o NPM fará algumas perguntas relacionadas ao projeto e ao final do questionário um arquivo *package.json* será criado para você. 
 
 Basicamente as perguntas serão: 
 
