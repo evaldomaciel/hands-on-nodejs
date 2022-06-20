@@ -1,0 +1,11 @@
+{
+	"cSpell.language": "en,pt,pt-BR",
+	"cSpell.words": [
+		"Anki",
+		"framework",
+		"middlewares"
+	], 
+	"editor.tabSize": 4,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false
+}

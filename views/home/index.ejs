@@ -1,0 +1,24 @@
+<%- include ('../partials/head.ejs'); %>
+	<body>
+		<header>
+			<h1>Hello Talk</h1>
+			<h4>Bem-vindo!</h4>
+		</header>
+		<section>
+		<% if (user == undefined) { %> 
+			<form action="/login" method="post">
+		<% } else { %>
+			<form action="/logout" method="get">
+		<% } %>
+				<input type="text" name="user[name]" placeholder="Nome">
+				<br />
+				<input type="email" name="user[email]" placeholder="E-mail">
+				<br />
+				<% if (user == undefined) { %><button type="submit" class="btn btn-success">Entrar</button> 
+				<% } else { %><button class="btn btn-danger">Sair</button><% } %>
+			</form> 
+			<% if (user == undefined) { %><!-- Se usuário logado -->
+			<% } else { %><span>Logado como <strong><%= user.name %></strong></span><% } %>
+		</section>
+	</body>
+<%- include ('../partials/footer.ejs'); %>

@@ -1,26 +1,22 @@
 {
-	"name": "meu-primeiro-app",
-	"version": "1.0.0",
-	"description": "Meu primeiro App",
-	"main": "index.js",
-	"scripts": {
-		"test": "jest"
-	},
-	"type": "module",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/evaldomaciel/hands-on-nodejs.git"
-	},
-	"keywords": [
-		"Nodejs",
-		"node",
-		"javascript",
-		"typescript"
-	],
-	"author": "Evaldo Borba Maciel",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/evaldomaciel/hands-on-nodejs/issues"
-	},
-	"homepage": "https://github.com/evaldomaciel/hands-on-nodejs#readme"
+  "name": "hellotalk",
+  "description": "Hellotalk - Contatos, chat e muito mais",
+  "author": "Evaldo Borba Maciel <evaldo@onerdalpha.com.br>",
+  "version": "0.0.0",
+  "private": true,
+  "lockfileVersion": 2,
+  "requires": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "ejs": "^3.1.8",
+    "express": "~4.16.1",
+    "express-load": "^1.1.16",
+    "express-session": "^1.17.3",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.1"
+  }
 }
