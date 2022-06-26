@@ -1,0 +1,21 @@
+<%- include ('../partials/head.ejs'); %>
+<header>
+	<h2>Hello Talk - Dados do contato</h2>
+</header>
+<section>
+	<% if (contact != undefined) { %>
+	<form action="/contact/<%- id %>?_method=delete" method="post">
+		<p><label>Nome:</label><%- contact.name %></p>
+		<p><label>E-mail:</label><%- contact.email %></p>
+		<p>
+			<button class="btn btn-danger" type="submit">Excluir</button>
+			<a href="/contact/<%- id %>/editar" class="btn btn-warning" >Editar</a>
+		</p>
+	</form>
+	<% } %>
+	<% if (contact == undefined) { %>
+		Contato não cadastrado
+	<% } %>
+</section>
+<%- include ('../partials/exit.ejs'); %>
+<%- include ('../partials/footer.ejs'); %>

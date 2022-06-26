@@ -1,0 +1,17 @@
+<%- include ('../partials/head.ejs'); %>
+<header>
+	<h2>Hello Talk - Editar contato</h2>
+</header>
+<section>
+	<form action="/contact/<%- id %>?_method=put" method="post">
+		<label>Nome:</label>
+		<input type="text" name="contact[name]" value="<%- contact.name %>">
+		<label>E-mail:</label>
+		<input type="text" name="contact[email]" value="<%- contact.email %>">
+		<p>
+			<button type="submit" class="btn btn-success" >Atualizar</button>
+		</p>
+	</form>
+</section>
+<%- include ('../partials/exit.ejs'); %>
+<%- include ('../partials/footer.ejs'); %>

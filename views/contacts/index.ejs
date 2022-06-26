@@ -1,0 +1,33 @@
+<%- include ('../partials/head.ejs'); %>
+<header>
+	<h2>Hello Talk - Agenda de contatos</h2>
+</header>
+<section>
+	<form action="/contacts" method="post">
+		<input type="text" name="contact[name]" id="contact[name]" placeholder="Nome"/>
+		<input type="text" name="contact[email]" id="contact[email]" placeholder="E-mail"/>
+		<button type="submit" class="btn btn-primary">Cadastrar</button>
+	</form>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>E-mail</th>
+				<th>Ação</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% contacts.forEach(function(contact, index) { %>
+				<tr>
+					<td><%- contact.name %></td>
+					<td><%- contact.email %></td>
+					<td>
+						<a href="/contact/<%- index %>">Detalhes</a>
+					</td>
+				</tr>
+			<% }) %>
+		</tbody>
+	</table>
+</section>
+<%- include ('../partials/exit.ejs'); %>
+<%- include ('../partials/footer.ejs'); %>

@@ -1,0 +1,7 @@
+<section>
+	<% if (user == undefined) { %><!-- Se usuário logado -->
+		<% } else { %>
+			<span>Logado como <strong><%= user.name %></strong></span>
+			<p><a class="btn btn-danger" href='/logout'>Sair</a></p>
+	<% } %>
+</section>

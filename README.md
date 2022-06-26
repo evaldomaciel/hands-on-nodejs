@@ -127,7 +127,7 @@ Iremos criar mais alguns pastas para seguir o padrão MVC e outras exclusivas pa
 - **models**: para interações com o banco de dados e APIs. 
 - **controllers**: para definir o fluxo de informações no sistema e regras de negócio.
 
-Para utilizarmos nossos *models* nos *controllers* fazemos uma chamado via *require('/models/nome-domodel')*. Muitas chamadas utilizando *require* podem poluir o código e perderemos em desempenho, felizmente o **Express** tem um *plugin* que mapeia os diretórios e insere nos módulos, o **express-load**. Via função **load('módulos').into(app)** podemos fazer esse controle. Mas primeiro precisamos incluir o *plugin* no projeto via NPM. 
+Para utilizarmos nossos *models* nos *controllers* fazemos uma chamado via *require('/models/nome-do-model')*. Muitas chamadas utilizando *require* podem poluir o código e perderemos em desempenho, felizmente o **Express** tem um *plugin* que mapeia os diretórios e insere nos módulos, o **express-load**. Via função **load('módulos').into(app)** podemos fazer esse controle. Mas primeiro precisamos incluir o *plugin* no projeto via NPM. 
 
 ```bash
 npm install express-load --save
@@ -165,7 +165,7 @@ module.exports = function (app) {
 	app.get('/', home.index);
 };
 ```
-Pelo **express-load** no *app.controllers.home* estamos referenciando o arquivo *controllers/home.js* e pela variável *app* estamos *chamando* esse controller. Agora vamos criar esse controller *controllers/home.js*: 
+Pelo **express-load** no *app.controllers.home* estamos referenciando o arquivo */controllers/home.js* e pela variável *app* estamos *chamando* esse controller. Agora vamos criar esse controller */controllers/home.js*: 
 
 ```js
 module.exports = function (app) {
@@ -210,9 +210,8 @@ Por fim, vamos criar nossa primeira view EJS em */views/home/index.ejs*, que nes
 ```
 Nesse projeto não vamos explicar e muito menos focar em CSS, por esse motivo, estamos usando o Bootstrap v2.3.1 para estilizar o formulário, por dois motivos, é leve e pequeno. Você pode baixar a mesma versão no site do projeto ou utilizar a mais moderna durante seus exercícios. Lógica por sua conta.
 
-<p style="text-align: center;">
-	<img alt="Formulário" src="./docs/img/2.0-carinho-do-nosso-form.png"/>
-</p>
+![Nosso formulário de login começando a ganhar forma](docs/img/2.0-carinho-do-nosso-form.png)
+
 
 ## Estruturando views
 
@@ -240,7 +239,7 @@ E o */views/partials/footer.ejs*:
 
 Agora vamos importar os nosso *partials* na *home.ejs*.
 
-```js
+```html
 <%- include ('../partials/head.ejs'); %>
 	<body>
 		<header>
@@ -274,7 +273,7 @@ Para isso, vamos precisar incluir mais um módulo no nosso projeto. O *express-s
 npm install express-session --save
 ```
 
-Agora vamos criar duas novas rotas no nosso arquivo de rotas, sendo essas */login* e */logout*, ambas no *routes/home.js*. 
+Agora vamos criar duas novas rotas no nosso arquivo de rotas, sendo essas */login* e */logout*, ambas no */routes/home.js*. 
 
 ```js
 module.exports = function (app) {
@@ -287,11 +286,364 @@ module.exports = function (app) {
 
 Não tem muito segredo, não é mesmo? *Login* é um *post* e *logout* um *get*. Afinal o login receberá os dados do formulário e o logout sera chamado atrás vezes um link.
 
-No nosso arquivo *controllers/home.js* vamos implementar nova *actions* para tratar as novas rotas e validar o login por usuário e senha. 
+No nosso arquivo */controllers/home.js* vamos implementar nova *actions* para tratar as novas rotas e validar o login por usuário e senha. 
+
+```js
+module.exports = function (app) {
+	var HomeController = {
+		index: function (req, res) {
+			if (req.session.user != undefined) {
+				user = req.session.user;
+				res.render('home/index', user);
+			} else {
+				user = undefined;
+				res.render('home/index', user);
+			}
+		},
+		login: (req, res) => {
+			var user = req.body.user;
+			user['contacts'] = [];
+			req.session.user = user;
+			console.log(req.session.user);
+			res.redirect('/');
+		},
+		logout: (req, res) => {
+			req.session.destroy();
+			res.redirect('/');
+		}
+	};
+	return HomeController;
+};
+```
+
+Para fechar, vamos criar uma *partial* chamada */views/exit.ejs* que será exibida apenas para o usuário logado e permita fazer o logout.
+
+```js
+<section>
+	<% if (user == undefined) { %><!-- Se usuário logado -->
+		<% } else { %>
+			<span>Logado como <strong><%= user.name %></strong></span>
+			<p><a class="btn btn-danger" href='/logout'>Sair</a></p>
+	<% } %>
+</section>
+```
+
+Altere as views criadas para incluir a seção de saída. 
+
+Por fim, altere o arquivo app.js de forma a tratar as novas execuções.
+
+```js
+var express = require('express'),
+	load = require('express-load'),
+	bodyParser = require('body-parser'),
+	cookieParser = require('cookie-parser'),
+	expressSession = require('express-session'),
+	app = express();
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(cookieParser('helloTalk'));
+app.use(expressSession());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+load('models')
+	.then('controllers')
+	.then('routes')
+	.into(app);
+app.listen(3000, function () {
+	console.log("Hello Talk is ready!");
+	console.log(__dirname);
+});
+```
+
+O módulo *body-parser* para receber os dados enviados pelo requisição via HTTP e o módulo *cookie-parser* que preenche a propriedade *res* do objeto request no nosso controller *(req. res)*. 
+
+## Rotas no padrão restful
+
+Vamos começar a trabalhar com rotas no padrão *restful* para manipular a nossa lista de contatos, para isso vamos começar criando uma pasta *contact/views* e nesta pasta vamos criar os arquivos *index.ejs*. Vamos fazer um CRUD usando as sessões de usuário para manipular os dados. Obviamente os dados serão perdidos ao reiniciarmos o serviço. Em outro momento vamos persistir esses dados em um banco, mas nesse momento nos focar em trabalhar os métodos.
+
+Precisamos instalar mais um módulo no nosso projeto, o *method-override*, que irá nos permitir usar o métodos HTTP como *PUT* ou *DELETE* em locais onde o cliente não oferece suporte, no nosso caso, o navegador.
+
+```bash
+npm install method-override --save
+```
+
+Após instalar, vamos incluir a chamada ao método no nosso app.js: 
+
+```js
+var express = require('express'),
+	load = require('express-load'),
+	bodyParser = require('body-parser'),
+	cookieParser = require('cookie-parser'),
+	expressSession = require('express-session'),
+	methodOverride = require('method-override'),
+	app = express();
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(cookieParser('helloTalk'));
+app.use(expressSession());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
+app.use(express.static(__dirname + '/public'));
+load('models')
+	.then('controllers')
+	.then('routes')
+	.into(app);
+app.listen(3000, function () {
+	console.log("Hello Talk is ready!");
+	console.log(__dirname);
+});
+```
+
+O *methodOverride('_method')* será um *middleware* que irá permitir que uma mesma rota seja reaproveitada pelos métodos HTTP. Essa é a sobrescrita de métodos do HTTP.
+
+Vamos criar dois arquivos. O primeiro chamado */routes/contact.js* para definirmos as rotas que iremos trabalhar e o segundo */middlewares/authenticator.js*: queria garantir que o somente usuários logados possam visualizar a lista de contatos e impedir que ocorram erros no abrir uma URL que requer autenticação. 
+
+**/routes/contact.js**
+
+```js
+module.exports = function (app) {
+	var auth = require ('../middlewares/authenticator.js');
+	var contacts = app.controllers.contacts;
+	app.get('/contacts', auth, contacts.index);
+	app.get('/contact/:id', auth, contacts.show);
+	app.post('/contacts', auth, contacts.create);
+	app.get('/contact/:id/editar', auth, contacts.edit);
+	app.put('/contact/:id', auth, contacts.update);
+	app.delete('/contact/:id', auth, contacts.destroy);
+};
+```
+
+Vamos trabalhar com 4 métodos, *GET*, *POST*, *PUT* e *DELETE*, o básico do *CRUD*. Ao funções do nosso *app* já são conhecidas, porém, aqui estamos passando uma função a mais como *callback*, que é a *auth*, para garantir que os contatos só poderão ser visualizadas por usuários logados. Para isso vamos criar o nosso *middleware* *authenticator*, que incluímos no início da nossa rota.   
+
+**/middlewares/authenticator.js**
+```js
+module.exports = function (req, res, next) {
+	if(!req.session.user) {
+		return res.redirect('/');
+	}
+	return next();
+}
+```
+
+Agora vamos definir no nosso *controller* como as rotas serão tradas. Para isso vamos editar o */controllers/contacts.js*. Aqui, conforme previsto pelo que definimos na rota, vamos criar as funções *index*, *show*, *create*, *edit*, *update*, *destroy*. Siga o código.
+
+```js
+module.exports = function (app) {
+	var ContactsController = {
+		index: function (req, res) {
+			var user = req.session.user,
+				contacts = user.contacts,
+				params = {
+					user: user,
+					contacts: contacts
+				};
+			res.render('contacts/index', params);
+		},
+		create: function (req, res) {
+			var contact = req.body.contact, 
+			user = req.session.user;
+			user.contacts.push(contact);
+			console.log(user);
+			res.redirect('/contacts');
+		},
+		show: function (req, res) {
+			var id = req.params.id,
+			contact = req.session.user.contacts[id],
+			params = {contact: contact, id: id};
+			res.render('contacts/show', params);
+		},
+		edit: function (req, res) {
+			var id = req.params.id,
+			user = req.session.user,
+			contact = user.contacts[id]
+			params = {
+				user: user,
+				contact: contact, 
+				id: id
+			};
+			res.render('contacts/edit', params);
+		},
+		update: function (req, res) {
+			var contact = req.body.contact,
+			user = req.session.user;
+			user.contacts[req.params.id] = contact;
+			res.redirect('/contacts');
+		},
+		destroy: function (req, res) {
+			var user = req.session.user,
+			id = req.params.id;
+			user.contacts.splice(id, 1);
+			res.redirect('/contacts')
+		}
+	};
+	return ContactsController;
+};
+```
+
+Agora vamos para parte visual, criando nossas views */views/contacts/index.ejs*, */views/contacts/show.ejs* e */views/contacts/edit.ejs*
+
+A página principal da nossa lista de contatos */views/contacts/index.ejs*, que terá uma tabela com os nossos contatos:
+```html
+<%- include ('../partials/head.ejs'); %>
+<header>
+	<h2>Hello Talk - Agenda de contatos</h2>
+</header>
+<section>
+	<form action="/contacts" method="post">
+		<input type="text" name="contact[name]" id="contact[name]" placeholder="Nome"/>
+		<input type="text" name="contact[email]" id="contact[email]" placeholder="E-mail"/>
+		<button type="submit" class="btn btn-primary">Cadastrar</button>
+	</form>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>E-mail</th>
+				<th>Ação</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% contacts.forEach(function(contact, index) { %>
+				<tr>
+					<td><%- contact.name %></td>
+					<td><%- contact.email %></td>
+					<td>
+						<a href="/contact/<%- index %>">Detalhes</a>
+					</td>
+				</tr>
+			<% }) %>
+		</tbody>
+	</table>
+</section>
+<%- include ('../partials/exit.ejs'); %>
+<%- include ('../partials/footer.ejs'); %>
+```
+
+Para exibir os detalhes do nosso contato teremos a view */views/contacts/show.ejs*: 
+```html
+<%- include ('../partials/head.ejs'); %>
+<header>
+	<h2>Hello Talk - Dados do contato</h2>
+</header>
+<section>
+	<form action="/contact/<%- id %>?_method=delete" method="post">
+		<p><label>Nome:</label><%- contact.name %></p>
+		<p><label>E-mail:</label><%- contact.email %></p>
+		<p>
+			<button class="btn btn-danger" type="submit">Excluir</button>
+			<a href="/contact/<%- id %>/editar" class="btn btn-warning" >Editar</a>
+		</p>
+	</form>
+</section>
+<%- include ('../partials/exit.ejs'); %>
+<%- include ('../partials/footer.ejs'); %>
+```
+
+Por fim a */views/contacts/edit.ejs* será nossa página para edição do contato:
+```html
+<%- include ('../partials/head.ejs'); %>
+<header>
+	<h2>Hello Talk - Editar contato</h2>
+</header>
+<section>
+	<form action="/contact/<%- id %>?_method=put" method="post">
+		<label>Nome:</label>
+		<input type="text" name="contact[name]" value="<%- contact.name %>">
+		<label>E-mail:</label>
+		<input type="text" name="contact[email]" value="<%- contact.email %>">
+		<p>
+			<button type="submit" class="btn btn-success" >Atualizar</button>
+		</p>
+	</form>
+</section>
+<%- include ('../partials/exit.ejs'); %>
+<%- include ('../partials/footer.ejs'); %>
+```
+
+Repare que nas telas de detalhes e edição dos contatos o *method* utilizado é o *POST* e é passando um parâmetro na *action*,*_method=put* e *_method=delete* respectivamente. Esses parâmetros são necessário para o funcionamento do **method-override**, através da função *methodOverride('_method')* que definimos no nosso arquivo *app.js*, uma vez que o cliente não reconhece os métodos *PUT* e *DELETE* ao enviar um formulário. 
 
 
+## Criando uma página 404 
+
+Conhecemos os possíveis erros reportados pelo HTTP, o mais comum, é claro, o 404 (página não encontrada), outros também poderão acontecer, por isso vamos criar uma página específica para retornar nossos erros de forma amigável para o usuário. 
+
+Vamos desenvolver primeiro a */views/not-found.ejs*.
+
+```html
+<%- include ('./partials/head.ejs'); %>
+	<header>
+		<h1>Hello Talk - Página não encontrada!</h1>
+		<h4>Essa página não existe :(</h4>
+		</header>
+	<hr>
+	<p>Voltar a <a href="/">home page?</a> :)</p>
+<%- include ('./partials/footer.ejs'); %>
+```
+
+Vamos desenvolver a */views/server-error.ejs* para apresentar mensagem de erro do servidor.
+
+```html
+<%- include ('./partials/head.ejs'); %>
+	<header>
+		<h1>Hello Talk - Erro!</h1>
+		<h4>Ops! Algo deu errado :(</h4>
+	</header>
+	<p>
+		Veja os detalhes do erro:
+		<br>
+		<%- error.message %>
+	</p>
+	<hr>
+	<p>Voltar a <a href="/">home page?</a> :)</p>
+<%- include ('./partials/footer.ejs'); %>
+```
+
+Agora vamos criar uma novo *middleware* para tratar as mensagens de erro em *middlewares/error.js*
+
+```js
+exports.notFound = function (req, res, next) {
+	res.status(404);
+	res.render('not-found')
+}; 
+
+exports.serverError = function (error, req, res, next){
+	res.status(500);
+	res.render('server-error', {error: error});
+}
+```
+
+Por fim, vamos alterar nosso *app.js* para tratar as mensagem de erro. Repare que as chamadas devem ser realizada após o carregamento dos controllers.
 
 
+```js
+var express = require('express'),
+	load = require('express-load'),
+	bodyParser = require('body-parser'),
+	cookieParser = require('cookie-parser'),
+	expressSession = require('express-session'),
+	methodOverride = require('method-override'),
+	error = require('./middlewares/error'),
+	app = express();
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(cookieParser('helloTalk'));
+app.use(expressSession());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
+app.use(express.static(__dirname + '/public'));
+load('models')
+	.then('controllers')
+	.then('routes')
+	.into(app);
+app.use(error.notFound);
+app.use(error.serverError);
+app.listen(3000, function () {
+	console.log("Hello Talk is ready!");
+	console.log(__dirname);
+});
+```
 
 # Referências
 

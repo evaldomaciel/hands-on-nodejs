@@ -10,15 +10,18 @@
 		<% } else { %>
 			<form action="/logout" method="get">
 		<% } %>
-				<input type="text" name="user[name]" placeholder="Nome">
+		<% if (user == undefined) { %><input type="text" name="user[name]" placeholder="Nome">
 				<br />
 				<input type="email" name="user[email]" placeholder="E-mail">
 				<br />
-				<% if (user == undefined) { %><button type="submit" class="btn btn-success">Entrar</button> 
-				<% } else { %><button class="btn btn-danger">Sair</button><% } %>
+				<button type="submit" class="btn btn-success">Entrar</button> 
+				<% } else { %><% } %>
 			</form> 
 			<% if (user == undefined) { %><!-- Se usuário logado -->
-			<% } else { %><span>Logado como <strong><%= user.name %></strong></span><% } %>
+			<% } else { %>
+				<p><a class="btn btn-success" href="/contacts">Visualizar lista de contatos</a></p>
+			<% } %>
 		</section>
+		<%- include ('../partials/exit.ejs'); %>
 	</body>
 <%- include ('../partials/footer.ejs'); %>
